@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: savi-lang/action-pull-from-base@v0
+      - uses: savi-lang/action-pull-from-base@v0.1.10
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           source-repo: savi-lang/base-standard-library
