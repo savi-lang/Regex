@@ -13,20 +13,20 @@
 
   :fun ref compile(pattern _Pattern)
     @_pattern(pattern)
-    @_op(_OpMatch)
+    @_op(_Op.Match)
     @
 
   :fun ref _pattern(pattern _Pattern)
     case pattern <: (
     | _PatternAnyByte |
-      @_op(_OpAnyByte)
+      @_op(_Op.AnyByte)
 
     | _PatternByte |
-      @_op(_OpByte)
+      @_op(_Op.Byte)
       @_byte(pattern.byte)
 
     | _PatternByteRange |
-      @_op(_OpByteRange)
+      @_op(_Op.ByteRange)
       @_byte(pattern.low)
       @_byte(pattern.high)
 
@@ -35,7 +35,7 @@
         if (byte < _Op.min_op) (
           @_byte(byte)
         |
-          @_op(_OpByte)
+          @_op(_Op.Byte)
           @_byte(byte)
         )
       )
@@ -44,7 +44,7 @@
       pattern.children.each -> (child | @_pattern(child))
 
     | _PatternOptional |
-      @_op(_OpSplit)
+      @_op(_Op.Split)
       primary_addr = @_later_addr
       secondary_addr = @_later_addr
 
@@ -58,7 +58,7 @@
 
     | _PatternZeroOrMore |
       start_cursor = @_cursor
-      @_op(_OpSplit)
+      @_op(_Op.Split)
       primary_addr = @_later_addr
       secondary_addr = @_later_addr
 
@@ -68,7 +68,7 @@
       try @_store_current_cursor_at!(present_addr)
       @_pattern(pattern.child)
 
-      @_op(_OpJump)
+      @_op(_Op.Jump)
       @_addr(start_cursor)
 
       try @_store_current_cursor_at!(absent_addr)
@@ -77,7 +77,7 @@
       start_cursor = @_cursor
       @_pattern(pattern.child)
 
-      @_op(_OpSplit)
+      @_op(_Op.Split)
       if pattern.is_non_greedy (
         after_addr = @_later_addr
         @_addr(start_cursor)
@@ -90,14 +90,14 @@
 
     | _PatternChoice |
       if (pattern.children.size == 2) (
-        @_op(_OpSplit)
+        @_op(_Op.Split)
         primary_addr = @_later_addr
         secondary_addr = @_later_addr
 
         try @_store_current_cursor_at!(primary_addr)
         try @_pattern(pattern.children[0]!)
 
-        @_op(_OpJump)
+        @_op(_Op.Jump)
         after_addr = @_later_addr
 
         try @_store_current_cursor_at!(secondary_addr)
@@ -105,7 +105,7 @@
 
         try @_store_current_cursor_at!(after_addr)
       |
-        @_op(_OpSplitMany)
+        @_op(_Op.SplitMany)
         branch_addrs Array(U32) = []
         pattern.children.each -> (child | branch_addrs << @_later_addr)
         @_addr(0) // branch list terminator
@@ -113,7 +113,7 @@
         after_addrs Array(U32) = []
         pattern.children.each_with_index -> (child, index |
           if (index > 0) (
-            @_op(_OpJump)
+            @_op(_Op.Jump)
             after_addrs << @_later_addr
           )
           try @_store_current_cursor_at!(branch_addrs[index]!)
