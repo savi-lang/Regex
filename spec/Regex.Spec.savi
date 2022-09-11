@@ -56,8 +56,8 @@
     assert: regex.matches("xyz").is_false
     assert: regex.matches("xz").is_false
 
-  :it "matches any digit with `\d`"
-    regex = Regex.compile("a\dc")
+  :it "matches any digit with `\\d`"
+    regex = Regex.compile("a\\dc")
     assert: regex.matches("a").is_false
     assert: regex.matches("ac").is_false
     assert: regex.matches("a c").is_false
@@ -65,8 +65,8 @@
     assert: regex.matches("a0c")
     assert: regex.matches("a9c")
 
-  :it "matches any ASCII word character with `\w`"
-    regex = Regex.compile("a\wc")
+  :it "matches any ASCII word character with `\\w`"
+    regex = Regex.compile("a\\wc")
     assert: regex.matches("a").is_false
     assert: regex.matches("ac").is_false
     assert: regex.matches("a c").is_false
