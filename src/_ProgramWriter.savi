@@ -32,7 +32,7 @@
 
     | _PatternCharacter |
       pattern.each_byte -> (byte |
-        if (byte < _Op.min_op) (
+        if byte < _Op.min_op (
           @_byte(byte)
         |
           @_op(_Op.Byte)
@@ -89,7 +89,7 @@
       )
 
     | _PatternChoice |
-      if (pattern.children.size == 2) (
+      if pattern.children.size == 2 (
         @_op(_Op.Split)
         primary_addr = @_later_addr
         secondary_addr = @_later_addr
@@ -112,7 +112,7 @@
 
         after_addrs Array(U32) = []
         pattern.children.each_with_index -> (child, index |
-          if (index > 0) (
+          if index > 0 (
             @_op(_Op.Jump)
             after_addrs << @_later_addr
           )

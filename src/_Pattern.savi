@@ -69,9 +69,9 @@
   :new (@byte_1, @byte_2, @byte_3, @byte_4)
   :fun each_byte
     yield @byte_1
-    if (@byte_2 != 0) (yield @byte_2)
-    if (@byte_3 != 0) (yield @byte_3)
-    if (@byte_4 != 0) (yield @byte_4)
+    if @byte_2 != 0 (yield @byte_2)
+    if @byte_3 != 0 (yield @byte_3)
+    if @byte_4 != 0 (yield @byte_4)
 
 :: Match a sequence of concatenated patterns, one after the other.
 :class _PatternSequence

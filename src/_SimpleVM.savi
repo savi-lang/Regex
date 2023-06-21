@@ -46,14 +46,14 @@
           | _Op.ByteRange.u8 == program_byte |
             low = @program[address +! 1]!
             high = @program[address +! 2]!
-            if (input_byte >= low && input_byte <= high) (
+            if input_byte >= low && input_byte <= high (
               @_continue!(next_threads, address +! 3)
             )
 
           // For _Op.Byte, we read the next byte in the bytecode program,
           // and compare it to the input byte to see if it fails to match.
           | _Op.Byte.u8 == program_byte |
-            if (input_byte == @program[address +! 1]!) (
+            if input_byte == @program[address +! 1]! (
               @_continue!(next_threads, address +! 2)
             )
 
@@ -61,7 +61,7 @@
           // an implied _Op.Byte op code with that byte as the expected byte,
           // so we compare it against the input byte same as we did above.
           | _Op.min_op > program_byte |
-            if (input_byte == program_byte) (
+            if input_byte == program_byte (
               @_continue!(next_threads, address +! 1)
             )
           )
@@ -115,7 +115,7 @@
       while keep_going (
         continue_address = @program.read_native_u32!(next_address).usize
         // If the continue address is zero, that marks the end of the list.
-        if (continue_address == 0) (
+        if continue_address == 0 (
           keep_going = False // TODO: use break instead
         |
           @_continue!(threads, continue_address)
