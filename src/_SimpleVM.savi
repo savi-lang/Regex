@@ -89,6 +89,7 @@
     @did_match
 
   :fun ref _continue!(threads Array(USize), address USize)
+    :errors None
     // TODO: prevent creating a new thread with gen == gen trick
 
     // Here we handle control flow opcodes that consume no input.
