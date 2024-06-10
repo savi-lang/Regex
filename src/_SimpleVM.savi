@@ -32,8 +32,8 @@
     try (
       // Start the initial thread at the beginning of the program.
       @_continue!(run_threads, 0)
-      input.each_with_index_until -> (input_byte, input_index |
-        run_threads.each_until -> (address |
+      input.each_with_index -> (input_byte, input_index |
+        run_threads.each -> (address |
           program_byte = @program[address]!
           case (
           // For _Op.AnyByte, consume the byte of input regardless of what it is,
@@ -68,7 +68,7 @@
 
           // Stop iterating over the threads when a full match is reached.
           // TODO: use early return instead
-          @did_match
+          return True if @did_match
         )
 
         // Swap the next_threads into the run_threads variable,
@@ -81,8 +81,7 @@
 
         // Stop iterating over the input when a full match is reached,
         // or when we run out of active threads - whichever comes first.
-        early_stop = @did_match || run_threads.is_empty
-        early_stop
+        return @did_match if @did_match || run_threads.is_empty
       )
     )
 
@@ -116,12 +115,10 @@
       while keep_going (
         continue_address = @program.read_native_u32!(next_address).usize
         // If the continue address is zero, that marks the end of the list.
-        if continue_address == 0 (
-          keep_going = False // TODO: use break instead
-        |
-          @_continue!(threads, continue_address)
-          next_address = next_address +! 4
-        )
+        break if continue_address == 0
+
+        @_continue!(threads, continue_address)
+        next_address = next_address +! 4
       )
 
     // If this is an _Op.Match, we've completed a full match.
